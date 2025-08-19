@@ -1,0 +1,221 @@
+{
+  "name": "N8N - WebUI Demo",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionKey": "={{ $('Webhook').item.json.body.user_id }}_{{ $('Webhook').item.json.body.chat_id }}",
+        "contextWindowLength": 10
+      },
+      "id": "b0ef1b19-520b-4c7e-9368-6f0982eb4ad9",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        -64,
+        192
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        96,
+        192
+      ],
+      "id": "cf9352f6-c38c-4261-b827-1560558d393c",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        240,
+        192
+      ],
+      "id": "4fd6b5d5-884c-456c-815e-3541c1bd2da7",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "OpenWebUITestAgent",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        -64
+      ],
+      "id": "2b1972f2-45eb-433d-9f6a-a2604dbf1767",
+      "name": "Webhook",
+      "webhookId": "b3e7d885-0c39-4425-a239-ae065759dbb5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NYM2R4zDMWkvm55F",
+          "name": "webui"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        368,
+        -64
+      ],
+      "id": "ad924fee-3863-446c-b177-c519734f6812",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "={{ $json.body.systemPrompt }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -64,
+        -64
+      ],
+      "id": "5bcb1851-cd2f-4d76-9800-232e6b02c875",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "includeTime": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Include_Current_Time', ``, 'boolean') }}",
+        "options": {
+          "timezone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Timezone', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        368,
+        192
+      ],
+      "id": "a6b73473-342c-40f7-adb9-d8fbb8be4854",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        192
+      ],
+      "id": "041969e2-fcd5-4ac1-8a25-a71e7be173ff",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "LqQFPr3D1D2Bkxcq",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d872a7f5-ecce-4688-ad10-017bbaeb0f27",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c900f1930da65b6eaa8e6c084e38b9ae6d1537749f3163a5daebff7012f11324"
+  },
+  "id": "Oixej2kiC9NxQDKa",
+  "tags": []
+}
